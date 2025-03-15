@@ -1,4 +1,55 @@
-let employees = JSON.parse(localStorage.getItem('empdata')) || [];
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+
+<body class="bg-gray-100 p-10">
+    <div class="max-w-lg mx-auto bg-pink-100 p-6 rounded-lg shadow-md">
+        <center>
+            <h2 class="text-xl font-bold mb-4">Employee Crud Application</h2>
+        </center>
+        <div class="mb-4">
+            <input type="text" class="w-full  border rounded mb-2" id="empid" placeholder="Enter Employee ID">
+            <input type="text" class="w-full  border rounded mb-2" id="empname" placeholder="Enter Employee Name">
+            <input type="text" class="w-full  border rounded mb-2" id="empcity" placeholder="Enter Employee City">
+            <button id="btn" class="mt-2 w-full bg-blue-400 p-2 rounded" onclick="addorUpdateEmployee()">Add
+                Employee</button>
+        </div>
+
+        <table class="w-full border-collapse border border-gray-300 mt-4">
+            <thead>
+                <tr class="bg-purple-100">
+                    <th class="border border-pink-300 p-2">ID</th>
+                    <th class="border border-pink-300 p-2">Name</th>
+                    <th class="border border-pink-300 p-2">City</th>
+                    <th class="border border-pink-300 p-2">Action</th>
+                </tr>
+            </thead>
+            <tbody id="emplist"></tbody>
+        </table>
+    </div>
+    <script src="crudapp.js"></script>
+</body>
+
+</html>
+
+-------------
+
+class Employee {
+  constructor(empId, empName, empCity) {
+    (this.empId = empId), (this.empName = empName), (this.empCity = empCity);
+  }
+}
+
+let employees =
+  JSON.parse(localStorage.getItem("empdata"))?.map(
+    (emp) => new Employee(emp.empId, emp.empName, emp.empCity)
+  ) || [];
 let editIndex = -1;
 
 function showEmp() {
@@ -6,32 +57,37 @@ function showEmp() {
   list.innerHTML = "";
   employees.forEach((emp, index) => {
     list.innerHTML += `
-        <li class="p-2 bg-gray-200 flex justify-between items-center rounded">
-        <span>${emp.empId} - ${emp.empName} - ${emp.empcity}</span>
-        <div>
-        <button class="bg-yellow-600 px-2 rounded" onclick="editEmployee(${index})" >Edit</button>
-        <button class="bg-red-500 px-2 rounded" onclick="deleteEmp(${index})">Delete</button>
-        </div>
-        </li>`;
+    <tr class="bg-gray-100 border-b">
+    <td class="border border-x-gray-300 p-2 text-center">${emp.empId}</td>
+     <td class="border border-x-gray-300 p-2 text-center">${emp.empName}</td>
+      <td class="border border-x-gray-300 p-2 text-center">${emp.empCity}</td>
+       <td class="border border-x-gray-300 p-2 text-center">
+       <button  class="bg-yellow-600 px-2 py-1 rounded" onclick="editEmployee(${index})">Edit</button>
+        <button onclick="confirmDelete(${index})" class="bg-red-600 px-2 py-1 rounded">Delete</button>
+       
+       </td>
+    </tr>
+      `;
   });
 }
-function saveToLocalStorage(){
-  localStorage.setItem('empdata',JSON.stringify(employees))
+function saveToLocalStorage() {
+  localStorage.setItem("empdata", JSON.stringify(employees));
 }
 function addorUpdateEmployee() {
   const empId = document.getElementById("empid").value;
   const empName = document.getElementById("empname").value;
-  const empcity = document.getElementById("empcity").value;
+  const empCity = document.getElementById("empcity").value;
 
-  if (empId && empName && empcity) {
+  if (empId && empName && empCity) {
     if (editIndex === -1) {
-      employees.push({ empId, empName, empcity });
+      const empData = new Employee(empId, empName, empCity);
+      employees.push(empData);
     } else {
-      employees[editIndex] = { empId, empName, empcity };
+      employees[editIndex] = { empId, empName, empCity };
       editIndex = -1;
       document.getElementById("btn").textContent = "Add Employee";
     }
-    saveToLocalStorage()
+    saveToLocalStorage();
     document.getElementById("empid").value = "";
     document.getElementById("empname").value = "";
     document.getElementById("empcity").value = "";
@@ -44,15 +100,18 @@ function editEmployee(index) {
   const emp = employees[index];
   document.getElementById("empid").value = emp.empId;
   document.getElementById("empname").value = emp.empName;
-  document.getElementById("empcity").value = emp.empcity;
+  document.getElementById("empcity").value = emp.empCity;
   document.getElementById("btn").textContent = "Update Employee";
   editIndex = index;
   console.log(editIndex);
 }
+function confirmDelete(index) {
+  if (confirm("Are you sure to delete this record?")) deleteEmp(index);
+}
 function deleteEmp(index) {
   employees.splice(index, 1);
-  saveToLocalStorage()
+  saveToLocalStorage();
   showEmp();
 }
 
-document.addEventListener('DOMContentLoaded',showEmp)
+document.addEventListener("DOMContentLoaded", showEmp);
