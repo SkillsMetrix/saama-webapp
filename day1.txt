@@ -1,3 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+
+<body class="bg-gray-100 p-10">
+    <div class="max-w-lg mx-auto bg-pink-100 p-6 rounded-lg shadow-md">
+     <center><h2 class="text-xl font-bold mb-4">Employee Crud Application</h2></center>   
+        <div class="mb-4">
+        <input type="text" class="w-full  border rounded mb-2" id="empid" placeholder="Enter Employee ID">
+        <input type="text" class="w-full  border rounded mb-2" id="empname" placeholder="Enter Employee Name">
+        <input type="text" class="w-full  border rounded mb-2" id="empcity" placeholder="Enter Employee City">
+        <button id="btn" class="mt-2 w-full bg-blue-400 p-2 rounded" onclick="addorUpdateEmployee()">Add Employee</button>
+    </div>
+        <ul id="emplist" class="space-y-2"></ul>
+    </div>
+    <script src="crudapp.js"></script>
+</body>
+
+</html>
+
+---------------
+
 let employees = [];
 let editIndex = -1;
 
@@ -6,11 +34,11 @@ function showEmp() {
   list.innerHTML = "";
   employees.forEach((emp, index) => {
     list.innerHTML += `
-        <li>
+        <li class="p-2 bg-gray-200 flex justify-between items-center rounded">
         <span>${emp.empId} - ${emp.empName} - ${emp.empcity}</span>
         <div>
-        <button class="edit-btn"onclick="editEmployee(${index})" >Edit</button>
-        <button class="delete-btn" onclick="deleteEmp(${index})">Delete</button>
+        <button class="bg-yellow-600 px-2 rounded" onclick="editEmployee(${index})" >Edit</button>
+        <button class="bg-red-500 px-2 rounded" onclick="deleteEmp(${index})">Delete</button>
         </div>
         </li>`;
   });
@@ -50,82 +78,3 @@ function deleteEmp(index) {
   employees.splice(index, 1);
   showEmp();
 }
-
-
-
---------------
-
-body{
-    background-color: rgb(163, 131, 136);
-    padding: 20px;
-}
-.container{
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: lightgray;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: lightgoldenrodyellow;
-}
-h2{
-    text-align: center;
-}
-input{
-    width: 75%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid lightskyblue;
-    border-radius: 4px;
-}
-button{
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    cursor: pointer;
-}
-.edit-btn{
-    background-color: lightsalmon;
-}
-.delete-btn{
-    background-color: rgb(114, 37, 7);
-}
-ul{
-    list-style: none;
-    padding: 0;
-}
-li{
-    padding: 10px;
-    margin: 5px 0;
-    display: flex;
-    justify-content: space-between;
-    border-radius: 4px;
-}
-
-
--------------
-
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="crudapp.css">
-    <title>Document</title>
-</head>
-
-<body>
-    <div class="container">
-        <h2>Employee Crud Application</h2>
-        <input type="text" id="empid" placeholder="Enter Employee ID">
-        <input type="text" id="empname" placeholder="Enter Employee Name">
-        <input type="text" id="empcity" placeholder="Enter Employee City">
-        <button id="btn" onclick="addorUpdateEmployee()">Add Employee</button>
-        <ul id="emplist"></ul>
-    </div>
-    <script src="crudapp.js"></script>
-</body>
-
-</html>
