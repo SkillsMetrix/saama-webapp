@@ -1,32 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <script src="https://cdn.tailwindcss.com"></script>
-    <title>Document</title>
-</head>
-
-<body class="bg-gray-100 p-10">
-    <div class="max-w-lg mx-auto bg-pink-100 p-6 rounded-lg shadow-md">
-     <center><h2 class="text-xl font-bold mb-4">Employee Crud Application</h2></center>   
-        <div class="mb-4">
-        <input type="text" class="w-full  border rounded mb-2" id="empid" placeholder="Enter Employee ID">
-        <input type="text" class="w-full  border rounded mb-2" id="empname" placeholder="Enter Employee Name">
-        <input type="text" class="w-full  border rounded mb-2" id="empcity" placeholder="Enter Employee City">
-        <button id="btn" class="mt-2 w-full bg-blue-400 p-2 rounded" onclick="addorUpdateEmployee()">Add Employee</button>
-    </div>
-        <ul id="emplist" class="space-y-2"></ul>
-    </div>
-    <script src="crudapp.js"></script>
-</body>
-
-</html>
-
----------------
-
-let employees = [];
+let employees = JSON.parse(localStorage.getItem('empdata')) || [];
 let editIndex = -1;
 
 function showEmp() {
@@ -43,7 +15,9 @@ function showEmp() {
         </li>`;
   });
 }
-
+function saveToLocalStorage(){
+  localStorage.setItem('empdata',JSON.stringify(employees))
+}
 function addorUpdateEmployee() {
   const empId = document.getElementById("empid").value;
   const empName = document.getElementById("empname").value;
@@ -57,6 +31,7 @@ function addorUpdateEmployee() {
       editIndex = -1;
       document.getElementById("btn").textContent = "Add Employee";
     }
+    saveToLocalStorage()
     document.getElementById("empid").value = "";
     document.getElementById("empname").value = "";
     document.getElementById("empcity").value = "";
@@ -76,5 +51,8 @@ function editEmployee(index) {
 }
 function deleteEmp(index) {
   employees.splice(index, 1);
+  saveToLocalStorage()
   showEmp();
 }
+
+document.addEventListener('DOMContentLoaded',showEmp)
