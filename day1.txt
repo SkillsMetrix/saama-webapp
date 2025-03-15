@@ -1,3 +1,60 @@
+let employees = [];
+let editIndex = -1;
+
+function showEmp() {
+  const list = document.getElementById("emplist");
+  list.innerHTML = "";
+  employees.forEach((emp, index) => {
+    list.innerHTML += `
+        <li>
+        <span>${emp.empId} - ${emp.empName} - ${emp.empcity}</span>
+        <div>
+        <button class="edit-btn"onclick="editEmployee(${index})" >Edit</button>
+        <button class="delete-btn" onclick="deleteEmp(${index})">Delete</button>
+        </div>
+        </li>`;
+  });
+}
+
+function addorUpdateEmployee() {
+  const empId = document.getElementById("empid").value;
+  const empName = document.getElementById("empname").value;
+  const empcity = document.getElementById("empcity").value;
+
+  if (empId && empName && empcity) {
+    if (editIndex === -1) {
+      employees.push({ empId, empName, empcity });
+    } else {
+      employees[editIndex] = { empId, empName, empcity };
+      editIndex = -1;
+      document.getElementById("btn").textContent = "Add Employee";
+    }
+    document.getElementById("empid").value = "";
+    document.getElementById("empname").value = "";
+    document.getElementById("empcity").value = "";
+
+    showEmp();
+  }
+}
+
+function editEmployee(index) {
+  const emp = employees[index];
+  document.getElementById("empid").value = emp.empId;
+  document.getElementById("empname").value = emp.empName;
+  document.getElementById("empcity").value = emp.empcity;
+  document.getElementById("btn").textContent = "Update Employee";
+  editIndex = index;
+  console.log(editIndex);
+}
+function deleteEmp(index) {
+  employees.splice(index, 1);
+  showEmp();
+}
+
+
+
+--------------
+
 body{
     background-color: rgb(163, 131, 136);
     padding: 20px;
@@ -33,51 +90,20 @@ button{
 .delete-btn{
     background-color: rgb(114, 37, 7);
 }
-
-
-------------
-
-
-let employees = [];
-
-function showEmp() {
-  const list = document.getElementById("emplist");
-  list.innerHTML = "";
-  employees.forEach((emp, index) => {
-    list.innerHTML = `
-        <li>
-        <span>${emp.empId} - ${emp.empName} - ${emp.empcity}</span>
-        <div>
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-        </div>
-
-        </li>
-        
-        
-        
-        `;
-  });
+ul{
+    list-style: none;
+    padding: 0;
 }
-
-function addEmployee() {
-  const empId = document.getElementById("empid").value;
-  const empName = document.getElementById("empname").value;
-  const empcity = document.getElementById("empcity").value;
-
-  if (empId && empName && empcity) {
-    employees.push({ empId, empName, empcity });
-    document.getElementById("empid").value = "";
-    document.getElementById("empname").value = "";
-    document.getElementById("empcity").value = "";
-    showEmp();
-  }
+li{
+    padding: 10px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 4px;
 }
-
 
 
 -------------
-
 
 
 <!DOCTYPE html>
@@ -96,7 +122,7 @@ function addEmployee() {
         <input type="text" id="empid" placeholder="Enter Employee ID">
         <input type="text" id="empname" placeholder="Enter Employee Name">
         <input type="text" id="empcity" placeholder="Enter Employee City">
-        <button onclick="addEmployee()">Add Employee</button>
+        <button id="btn" onclick="addorUpdateEmployee()">Add Employee</button>
         <ul id="emplist"></ul>
     </div>
     <script src="crudapp.js"></script>
