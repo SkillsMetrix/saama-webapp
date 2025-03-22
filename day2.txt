@@ -1,0 +1,119 @@
+import React, { Component } from "react";
+import Header from "./Header";
+import Footer from "./Footer";
+import Users from "./Users";
+import AddUser from "./AdUser";
+
+export default class MainApp extends Component {
+  // initialize the state
+  state = {
+    headerTitle: "Welcome to Header Component",
+    userData: [],
+  };
+
+  deleteUser = (data) => {
+    this.setState((prevState) => {
+      return {
+        userData: prevState.userData.filter((udata) => data !== udata),
+      };
+    });
+  };
+  addUser = (data) => {
+    this.setState((prevState) => {
+      return {
+        userdata: prevState.userData.push(data),
+      };
+    });
+  };
+  deleteAll = () => {
+    this.setState(() => {
+      return {
+        userData: [],
+      };
+    });
+  };
+  render() {
+    return (
+      <div>
+        <Header title={this.state.headerTitle} />
+        <p>Welcome to MainApp</p>
+        <Users duser={this.deleteUser} udata={this.state.userData} />
+        <AddUser adduser={this.addUser} />
+        <Footer hasData={this.state.userData.length > 0} da={this.deleteAll} />
+      </div>
+    );
+  }
+}
+
+
+-----------
+
+import React, { Component } from "react";
+import User from "./User";
+
+export default class Users extends Component {
+  render() {
+
+    return (
+      <div>
+    {this.props.udata.map((data)=><User key={data} ud={data} du={this.props.duser}/>)}
+    <User/>
+    </div>
+    )
+  }
+}
+
+
+
+-----------
+import React, { Component } from "react";
+
+export default class User extends Component {
+  render() {
+    return (
+    <div>
+      {this.props.ud}
+      <button onClick={()=> this.props.du(this.props.ud)}>Delete</button>
+    </div>
+    )
+  }
+}
+
+
+------------
+
+import React, { Component } from "react";
+
+export default class Footer extends Component {
+  render() {
+    return (
+    <div>
+   <button disabled={!this.props.hasData} onClick={this.props.da}>Delete All</button>
+   </div>
+    )
+}
+}
+
+
+-----------
+
+import React, { Component } from "react";
+
+export default class AddUser extends Component {
+  addUser = (e) => {
+    e.preventDefault();
+    const data = e.target.elements.uname.value;
+    this.props.adduser(data)
+    
+  };
+  render() {
+    return (
+      <div>
+        <form onSubmit={this.addUser}>
+          UserName: <input type="text" name="uname" />
+          <button>Add USer</button>
+        </form>
+      </div>
+    );
+  }
+}
