@@ -1,53 +1,19 @@
-import ProductDetail from "./containers/ProductDetail";
-import ProductListing from "./containers/ProductListing";
-
-
-export const routes=[
-    {path:'/' ,element:<ProductListing/>},
-    {path:'/product/:pid' ,element:<ProductDetail/>}
-]
-
-----
-
-
-import logo from './logo.svg';
-import './App.css';
-import Header from './containers/Header';
-import { useRoutes } from 'react-router-dom'
-import { routes } from './routes';
-
-function App() {
-  const appRoutes= useRoutes(routes)
+import React from "react";
+import { useSelector } from "react-redux";
+function ProductComponent(props) {
+  const products = useSelector((state) => state.allProducts.products);
+  const { id, title } = products[0];
   return (
-    <div className="App">
-     <Header/>
-     <hr/>
-     {appRoutes}
+    <div className="four wide column">
+      <div className="ui link cards">
+        <div className="card">
+          <div className="image"></div>
+          <div className="content"></div>
+          <div className="header">{title}</div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;
-
-
-----------
-
-
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { Provider } from "react-redux";
-import store from "./redux/store";
-import { BrowserRouter } from "react-router-dom";
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
-);
-
-reportWebVitals();
+export default ProductComponent;
