@@ -1,27 +1,87 @@
-import React from "react";
-import { useSelector } from "react-redux";
-function ProductComponent(props) {
-  const products = useSelector((state) => state.allProducts.products);
-  const renderList = products.map((product) => {
-    const { id, title, category, image, price } = product;
-    return (
-      <div key={id} className="four wide column">
-        <div className="ui link cards">
-          <div className="card">
-            <div className="image">
-              <img src={image}></img>
+import React, { useEffect } from "react";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { selectedProducts } from "../redux/actions/productActions";
+function ProductDetail(props) {
+  const product = useSelector((state) => state.product);
+  const { id, title, category, image, price, description } = product;
+  const { pid } = useParams();
+  const dispatch = useDispatch();
+  console.log(pid);
+
+  const fetchDetails = async () => {
+    const response = await axios.get(
+      `https://fakestoreapi.com/products/${pid}`
+    );
+    dispatch(selectedProducts(response.data));
+  };
+  useEffect(() => {
+    fetchDetails();
+  }, [pid]);
+
+  return (
+    <div className="ui grid container">
+      <div className="ui placeholder segment">
+        <div className="ui two column stackable center aligned grid">
+          <div className="ui vertical divider">AND</div>
+          <div className="middle aligned row">
+            <div className="column 1p">
+              <img className="ui fluid image" src={image} />
             </div>
-            <div className="content">
-              <div className="header">{title}</div>
-              <div className="meta price">${price}</div>
-              <div className="meta">{category}</div>
+            <div className="column rp">
+              <h1>{title}</h1>
+              <h2>
+                <a className="ui teal tag label">${price}</a>
+              </h2>
+              <h3 className="ui brown block header">{category}</h3>
+              <p>{description}</p>
+              <div className="ui vertical animated button" tabIndex={0}>
+                <div className="hidden content">
+                  <i className="shop icon"></i>
+                </div>
+                <div className="visible content">Add To Cart</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  });
-  return <>{renderList}</>;
+    </div>
+  );
 }
 
-export default ProductComponent;
+export default ProductDetail;
+
+
+----------
+
+
+import { ActionTYpes } from "../constants/action-types";
+
+const initialState = {
+  products: [],
+};
+
+export const productReducer = (state = initialState, { type, payload }) => {
+  switch (type) {
+    case ActionTYpes.SET_PRODUCTS:
+      return { ...state, products: payload };
+    default:
+      return state;
+  }
+};
+
+export const selectedProductReducer = (state = {}, { type, payload }) => {
+  switch (type) {
+    case ActionTYpes.SELECTED_PRODUCT:
+      return { ...state, ... payload };
+    default:
+      return state;
+  }
+};
+
+
+----------
+
+
+
