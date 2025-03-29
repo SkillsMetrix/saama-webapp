@@ -1,35 +1,73 @@
-import { createContext, useContext, useState } from "react";
-const userData = { id: 101, username: "Admin", city: "pune", income: 123456 };
 
-const appContext = createContext();
 
-function ContextApp() {
-  const [emp, setEmp] = useState(userData);
+import { createContext } from 'react'
+
+export const MyContext=createContext()
+
+
+-------
+
+import React, { useContext } from 'react';
+import { MyContext } from './MyContext';
+
+function MyComponent(props) {
+
+    const mydata= useContext(MyContext)
+    return (
+        <div>
+            UserData:
+            {mydata.map((data)=> (
+                <div key={data}>{data.uname}</div>
+            ))}
+
+            
+        </div>
+    );
+}
+
+export default MyComponent;
+
+
+
+-------------------
+
+
+import React from 'react';
+import MyComponent from './MyComponent';
+
+function MainComp(props) {
+    return (
+        <div>
+           <MyComponent/>
+        </div>
+    );
+}
+
+export default MainComp;
+
+
+------
+
+
+import logo from './logo.svg';
+import './App.css';
+import UserApp from './components/UserApp';
+import ContextApp from './components/ContextApp';
+import { MyContext } from './contextapi/MyContext';
+import { useState } from 'react';
+import MainComp from './contextapi/MainComp';
+
+const userData=[{uname:'Amarjeet',city:'pune'}]
+function App() {
+  const [user,setUser]=useState(userData)
   return (
-    <div>
-      <appContext.Provider value={emp}>
-        <Employee />
-      </appContext.Provider>
-    </div>
+   /*  <div className="App">
+     <ContextApp/>
+    </div> */
+    <MyContext.Provider value={user}>
+      <MainComp/>
+    </MyContext.Provider>
   );
 }
 
-function Employee() {
-    const empContext= useContext(appContext)
-  return (
-    <div>
-        <p>Employee name:{empContext.username}</p>
-      <Income />
-    </div>
-  );
-}
-
-function Income() {
-    const salaryContext= useContext(appContext)
-  return (
-    <div>
-      <p>Income comp: {salaryContext.income}</p>
-    </div>
-  );
-}
-export default ContextApp;
+export default App;
