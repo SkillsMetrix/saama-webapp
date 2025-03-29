@@ -1,0 +1,35 @@
+import { createContext, useContext, useState } from "react";
+const userData = { id: 101, username: "Admin", city: "pune", income: 123456 };
+
+const appContext = createContext();
+
+function ContextApp() {
+  const [emp, setEmp] = useState(userData);
+  return (
+    <div>
+      <appContext.Provider value={emp}>
+        <Employee />
+      </appContext.Provider>
+    </div>
+  );
+}
+
+function Employee() {
+    const empContext= useContext(appContext)
+  return (
+    <div>
+        <p>Employee name:{empContext.username}</p>
+      <Income />
+    </div>
+  );
+}
+
+function Income() {
+    const salaryContext= useContext(appContext)
+  return (
+    <div>
+      <p>Income comp: {salaryContext.income}</p>
+    </div>
+  );
+}
+export default ContextApp;
