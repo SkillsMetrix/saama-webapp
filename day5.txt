@@ -1,0 +1,64 @@
+const express = require("express");
+const bp = require("body-parser");
+const jwt = require("jsonwebtoken");
+const config = require("./config.json");
+const router = express.Router();
+const app = express();
+app.use(bp.json());
+router.post("/login", (req, res) => {
+  const postdata = req.body;
+  const user = {
+    uname: postdata.uname,
+    password: postdata.password,
+  };
+  const token = jwt.sign(user, config.secret, { expiresIn: config.tokenlife });
+  const response = {
+    status: "logged in",
+    token: token,
+  };
+  res.send(response);
+});
+router.use(require("./tokenChecker"));
+router.get("/userdetails", (req, res) => {
+  res.send("user details");
+});
+app.use("/api", router);
+
+app.listen(3000, () => {
+  console.log("server is ready");
+});
+
+
+
+------------
+
+
+{
+"secret": "user-secret-here",
+"port":3000,
+"tokenlife":900
+}
+
+
+
+-----------
+
+
+const jwt= require('jsonwebtoken')
+const config= require('./config.json')
+
+module.exports=(req,res,next)=>{
+    const token= req.headers['x-access-token']
+    if(token){
+        jwt.verify(token,config.secret,function(err,decoded){
+            if(err){
+                return res.status(401).json({"error":true,"message":"unauthorized access"})
+
+            }
+            req.decoded= decoded
+            next()
+        })
+    }else{
+        res.status(403).send({"error":true,"message":"no token found"})
+    }
+}
