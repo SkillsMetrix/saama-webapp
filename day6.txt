@@ -1,83 +1,95 @@
 
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux'
+import { register } from '../redux/authSlice';
+function Register(props) {
 
-const mongoose= require('mongoose')
-const connectDB= async() =>{
-    try{
-        console.log('getting connected');
-        
-        await mongoose.connect("mongodb+srv://saama:saama@cluster0.rle5i.mongodb.net/saamadb?retryWrites=true&w=majority&appName=Cluster0")
-        //await mongoose.connect("mongodb://localhost:27017/saamadb")
+const [formData,setFormData]= useState({username:'',password:''})
+const dispatch= useDispatch()
 
-        console.log('connected to DB');
-        
-    }catch(err){}
+const handleChange=(e)=>{
+e.preventDefault();
+setFormData({...formData,[e.target.name]:e.target.value})
+
 }
-module.exports=connectDB;
-
-
------------
-
-const mongoose = require("mongoose");
-
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-});
-module.exports = mongoose.model("User", UserSchema);
-
-
--------
-
-const express= require('express')
-const bcrypt= require('bcryptjs')
-const jwt= require('jsonwebtoken')
-const User= require('../models/User')
-
-const router= express.Router()
-router.post('/register',async(req,res)=>{
-     
+const handleSubmit=async (e) =>{
+    e.preventDefault()
+    console.log(formData);
     
-    const {username,password}= req.body
-    console.log(username);
-    console.log(password);
-    const hashed= await bcrypt.hash(password,10)
-    console.log(hashed);
+    await dispatch(register(formData)).unwrap()
+}
+    return (
+        <div>
+            <form onSubmit={handleSubmit} >
+                <h2>User Registration Form</h2>
+                UserName: <input type='text' name='username' value={formData.username} onChange={handleChange} placeholder='Enter UserName'/>
+                Password: <input type='password' name='password' value={formData.password} onChange={handleChange}  placeholder='Enter Password'/>
+            <button>Register</button>
+            </form>
+        </div>
+    );
+}
 
-    try{
-        console.log('getting stored');
-        const newUser= await User.create({username,password: hashed})
-        console.log(newUser);
-        
-        res.status(201).json({message:'User Registered',data:newUser})
-    }catch(err){
-        res.status(400).json({error:'User Already exists'})
-        
+export default Register;
+
+----------------
+
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const API = "http://localhost:3200/api/auth";
+
+export const register = createAsyncThunk("auth/register", async (userData) => {
+  await axios.post(`${API}/register`, userData);
+});
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    user: null,
+    token: null,
+    status: null,
+  },
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+    },
+  },
+});
+export const { logout } = authSlice.actions;
+export default authSlice.reducer;
+
+
+------------
+
+
+
+
+import { configureStore } from '@reduxjs/toolkit'
+import authReducer from '../redux/authSlice'
+
+export const store= configureStore({
+    reducer:{
+        auth:authReducer
     }
 })
 
-module.exports=router
+----------
 
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux'
+import { store } from './redux/store';
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
 
-
--------
-
-
-var express= require('express')
-const connectDB = require("./config/db");
-
-const authRoutes= require('./routes/auth')
-const app=express()
-
-
-app.use(express.json())
-
-connectDB();
-app.use('/api/auth',authRoutes)
-
-app.listen(3200,()=>{
-    console.log('server is ready...!');
-    
-})
-
-
-
+ 
+reportWebVitals();
